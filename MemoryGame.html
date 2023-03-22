@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Memory Game</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Gajraj+One&family=Holtwood+One+SC&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-family: 'Gajraj One', cursive;
+            color: #3c1052;
+            font-size: 62px;
+            text-align: center;
+        }
+
+        p {
+            font-family: 'Press Start 2P', cursive;
+            color: rgb(163, 25, 71);
+            font-size: 62px;
+            text-align: center;
+        }
+
+        body {
+            background-color: palevioletred;
+        }
+
+        img {
+            width: 120px;
+            height: 160px;
+        }
+
+        .wrapper {
+            box-sizing: content-box;
+            width: 600px;
+            padding: 2.5em 3em;
+            background-color: #ffffff;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            border-radius: 0.6em;
+            box-shadow: 0 0.9em 2.8em rgba(86, 66, 0, 0.2);
+        }
+
+        .game-container {
+            position: relative;
+            width: 100%;
+            display: grid;
+            gap: 0.6em;
+        }
+
+        .stats-container {
+            text-align: right;
+            margin-bottom: 1.2em;
+        }
+
+        .stats-container span {
+            font-weight: 600;
+        }
+
+        .card-container {
+            position: relative;
+            width: 120px;
+            height: 160px;
+            cursor: pointer;
+        }
+
+        .card-before,
+        .card-after {
+            position: absolute;
+            border-radius: 5px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #5c5c5c;
+            transition: transform 0.7s ease-out;
+            backface-visibility: hidden;
+        }
+
+        .card-before {
+            background-color: #66347F;
+            font-size: 2.8em;
+            font-weight: 600;
+        }
+
+        .card-after {
+            background-color: pink;
+            transform: rotateY(180deg);
+        }
+
+        .card-container.flipped .card-before {
+            transform: rotateY(180deg);
+        }
+
+        .card-container.flipped .card-after {
+            transform: rotateY(0deg);
+        }
+
+        .controls-container {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(325deg, #03001e 0%, #66347F 30%, palevioletred 70%, pink 100%);
+            top: 0;
+        }
+
+        button {
+            font-family: 'Press Start 2P', cursive;
+            border: none;
+            border-radius: 0.3em;
+            padding: 1em 1.5em;
+            cursor: pointer;
+        }
+
+        .button {
+            font-family: 'Press Start 2P', cursive;
+            background-color: white;
+            border: none;
+            color: black;
+            border-radius: 0.3em;
+            padding: 1em 1.5em;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #stop {
+            font-size: 20px;
+            display: block;
+            margin: 1.1em auto 0 auto;
+            background-color: palevioletred;
+            color: #ffffff;
+        }
+
+        .controls-container button {
+            font-size: 25px;
+            box-shadow: 0 0.6em 2em rgba(86, 66, 0, 0.2);
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <br><br><br>
+    <h1>Maalaala Mo Kaya</h1>
+    <br><br><br>
+    <div class="wrapper">
+        <div class="stats-container">
+            <div id="moves-count"></div>
+            <div id="time"></div>
+        </div>
+        <div class="game-container"></div>
+        <button id="stop" class="hide">Stop</button>
+    </div>
+    <div class="controls-container">
+        <p id="result"></p>
+        <h1><br><br>Click the button to start the game.<br><br></h1>
+        <button id="start">Start</button>
+        <br><br>
+        <a href="index.html" class="button">Go back to Homepage</a>
+    </div>
+	<script>
+    const moves = document.getElementById("moves-count");
+    const timeValue = document.getElementById("time");
+    const startButton = document.getElementById("start");
+    const stopButton = document.getElementById("stop");
+    const gameContainer = document.querySelector(".game-container");
+    const result = document.getElementById("result");
+    const controls = document.querySelector(".controls-container");
+    let cards;
+    let interval;
+    let firstCard = false;
+    let secondCard = false;
+
+    const items = [
+        { name: "Dayannah_1", image: "https://i.ibb.co/N7Rcg0q/Dayannah-1.jpg" },
+        { name: "Dayannah_2", image: "https://i.ibb.co/854w70T/Dayannah-2.jpg" },
+        { name: "Dayannah_3", image: "https://i.ibb.co/njCJNbd/Dayannah-3.jpg" },
+        { name: "Jenica_1", image: "https://i.ibb.co/4M7h7bN/Jenica-1.jpg" },
+        { name: "Jenica_2", image: "https://i.ibb.co/s2ZdhT8/Jenica-2.jpg" },
+        { name: "Jenica_3", image: "https://i.ibb.co/nnDRj5y/Jenica-3.jpg" },
+        { name: "Juan_1", image: "https://i.ibb.co/L8PVrkB/Juan-1.jpg" },
+        { name: "Juan_2", image: "https://i.ibb.co/CMJrhkT/Juan-2.jpg" },
+        { name: "Juan_3", image: "https://i.ibb.co/2t5M9Y9/Juan-3.jpg" },
+        { name: "Group_1", image: "https://i.ibb.co/M6MYXnJ/Group-1.jpg" },
+        { name: "Ice_1", image: "https://i.ibb.co/K6Znznd/Ice-1.jpg" },
+        { name: "Ice_2", image: "https://i.ibb.co/KzbvvQz/Ice-2.jpg" },
+    ];
+
+    let seconds = 0,
+        minutes = 0;
+    let movesCount = 0,
+        winCount = 0;
+
+    const timeGenerator = () => {
+        seconds += 1;
+        if (seconds >= 60) {
+            minutes += 1;
+            seconds = 0;
+        }
+        let secondsValue = seconds < 10 ? `0${seconds}` : seconds;
+        let minutesValue = minutes < 10 ? `0${minutes}` : minutes;
+        timeValue.innerHTML = `<span>Time:</span>${minutesValue}:${secondsValue}`;
+    };
+
+    const movesCounter = () => {
+        movesCount += 1;
+        moves.innerHTML = `<span>Moves:</span>${movesCount}`;
+    };
+
+    const generateRandom = (size = 4) => {
+        let tempArray = [...items];
+        let cardValues = [];
+        size = (size * size) / 2;
+        for (let i = 0; i < size; i++) {
+            const randomIndex = Math.floor(Math.random() * tempArray.length);
+            cardValues.push(tempArray[randomIndex]);
+            tempArray.splice(randomIndex, 1);
+        }
+        return cardValues;
+    };
+    const matrixGenerator = (cardValues, size = 4) => {
+        gameContainer.innerHTML = "";
+        cardValues = [...cardValues, ...cardValues];
+        cardValues.sort(() => Math.random() - 0.5);
+        for (let i = 0; i < size * size; i++) {
+            gameContainer.innerHTML += `
+     <div class="card-container" data-card-value="${cardValues[i].name}">
+        <div class="card-before"></div>
+        <div class="card-after">
+        <img src="${cardValues[i].image}" class="image"/></div>
+     </div>
+     `;
+        }
+
+        gameContainer.style.gridTemplateColumns = `repeat(${size},auto)`;
+
+        cards = document.querySelectorAll(".card-container");
+        cards.forEach((card) => {
+            card.addEventListener("click", () => {
+                if (!card.classList.contains("matched")) {
+                    card.classList.add("flipped");
+                    if (!firstCard) {
+                        firstCard = card;
+                        firstCardValue = card.getAttribute("data-card-value");
+                    } else {
+                        movesCounter();
+                        secondCard = card;
+                        let secondCardValue = card.getAttribute("data-card-value");
+                        if (firstCardValue == secondCardValue) {
+                            firstCard.classList.add("matched");
+                            secondCard.classList.add("matched");
+                            firstCard = false;
+                            winCount += 1;
+                            if (winCount == Math.floor(cardValues.length / 2)) {
+                                result.innerHTML = `<h1>YOU WON</h1> <p>Congratulations, You completed the game!</p>`;
+                                stopGame();
+                            }
+                        } else {
+                            let [tempFirst, tempSecond] = [firstCard, secondCard];
+                            firstCard = false;
+                            secondCard = false;
+                            let delay = setTimeout(() => {
+                                tempFirst.classList.remove("flipped");
+                                tempSecond.classList.remove("flipped");
+                            }, 900);
+                        }
+                    }
+                }
+            });
+        });
+    };
+
+    startButton.addEventListener("click", () => {
+        movesCount = 0;
+        seconds = 0;
+        minutes = 0;
+        controls.classList.add("hide");
+        stopButton.classList.remove("hide");
+        startButton.classList.add("hide");
+        interval = setInterval(timeGenerator, 1000);
+        moves.innerHTML = `<span>Moves:</span> ${movesCount}`;
+        initializer();
+    });
+
+    stopButton.addEventListener(
+        "click",
+        (stopGame = () => {
+            controls.classList.remove("hide");
+            stopButton.classList.add("hide");
+            startButton.classList.remove("hide");
+            clearInterval(interval);
+        })
+    );
+
+    const initializer = () => {
+        result.innerText = "";
+        winCount = 0;
+        let cardValues = generateRandom();
+        console.log(cardValues);
+        matrixGenerator(cardValues);
+    };
+</script>
+
+</body>
+
+
+</html>

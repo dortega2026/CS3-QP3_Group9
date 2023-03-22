@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3072</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Gajraj+One&family=Holtwood+One+SC&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Holtwood One SC', serif;
+            font-size: 16px;
+            text-align: center;
+            background-color: palevioletred;
+        }
+
+        hr {
+            width: 500px;
+            color: #66347F;
+            border-style: solid;
+        }
+
+        h2 {
+            font-family: 'Press Start 2P', cursive;
+            color: #66347F;
+            font-size: 15px;
+        }
+
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 36px;
+            color: #66347F;
+        }
+
+        #board {
+            width: 400px;
+            height: 400px;
+
+            background-color: #ded9c3;
+            border: 5px solid #4e2661;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            color: #66347F;
+            border-color: black;
+            font-family: 'Holtwood One SC', serif;
+            font-size: 16px;
+            border-radius: 0.5rem;
+            padding: 8px;
+            text-align: center;
+            margin-right: 85%;
+            margin-top: 10%;
+        }
+
+        .btn:hover {
+            border-color: rgb(71, 89, 95);
+            background-color: #FFACAC;
+            box-shadow: 0 0.3rem 1rem #fa7373;
+        }
+
+        .two-btn {
+            color: #66347F;
+            border-color: black;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            border-radius: 0.5rem;
+            padding: 3px;
+            text-align: center;
+            margin-left: 5%;
+        }
+
+        .two-btn:hover {
+            border-color: rgb(71, 89, 95);
+            background-color: #FFACAC;
+            box-shadow: 0 0.3rem 1rem #fa7373;
+        }
+
+        .tile {
+            width: 90px;
+            height: 90px;
+            border: 5px solid #4e2661;
+
+            font-size: 30px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .x3 {
+            background-color: #edccfc;
+            color: #727371;
+        }
+
+        .x6 {
+            background-color: #e3b1fa;
+            color: #727371;
+        }
+
+        .x12 {
+            background-color: #9c65b8;
+            color: white;
+        }
+
+        .x24 {
+            background-color: #84569c;
+            color: white;
+        }
+
+        .x48 {
+            background-color: #6d3e85;
+            color: white;
+        }
+
+        .x96 {
+            background-color: #61297d;
+            color: white;
+        }
+
+        .x192 {
+            background-color: #5c1f7a;
+            color: white;
+        }
+
+        .x384 {
+            background-color: #501f69;
+            color: white;
+        }
+
+        .x768 {
+            background-color: #4d1769;
+            color: white;
+        }
+
+        .x1536 {
+            background-color: #4c1766;
+            color: white;
+        }
+
+        .x3072 {
+            background-color: #461061;
+            color: white;
+        }
+
+        .x6144 {
+            background-color: #450a63;
+            color: white;
+        }
+
+        .x12288 {
+            background-color: #35024f;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <br><br>
+    <a href="index.html" class="btn btn-outline-light">←BACK</a>
+    <h1>3072</h1>
+    <hr>
+    <h2>Score: <span id="score">0</span><a href="3072.html" class="two-btn btn-outline-light">↻ restart</a></h2>
+    <div id="board">
+    </div>
+    <script>
+        var board;
+        var score = 0;
+        var rows = 4;
+        var columns = 4;
+
+        window.onload = function () {
+            setGame();
+        }
+
+        function setGame() {
+
+            board = [
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+            ]
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < columns; c++) {
+                    let tile = document.createElement("div");
+                    tile.id = r.toString() + "-" + c.toString();
+                    let num = board[r][c];
+                    updateTile(tile, num);
+                    document.getElementById("board").append(tile);
+                }
+            }
+            setTwo();
+            setTwo();
+
+        }
+
+        function updateTile(tile, num) {
+            tile.innerText = "";
+            tile.classList.value = "";
+            tile.classList.add("tile");
+            if (num > 0) {
+                tile.innerText = num.toString();
+                if (num <= 6144) {
+                    tile.classList.add("x" + num.toString());
+                } else {
+                    tile.classList.add("x12288");
+                }
+            }
+        }
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code == "ArrowLeft") {
+                slideLeft();
+                setTwo();
+            }
+            else if (e.code == "ArrowRight") {
+                slideRight();
+                setTwo();
+            }
+            else if (e.code == "ArrowUp") {
+                slideUp();
+                setTwo();
+
+            }
+            else if (e.code == "ArrowDown") {
+                slideDown();
+                setTwo();
+            }
+            document.getElementById("score").innerText = score;
+        })
+
+        function filterZero(row) {
+            return row.filter(num => num != 0);
+        }
+
+        function slide(row) {
+
+            row = filterZero(row);
+            for (let i = 0; i < row.length - 1; i++) {
+                if (row[i] == row[i + 1]) {
+                    row[i] *= 2;
+                    row[i + 1] = 0;
+                    score += row[i];
+                }
+            }
+            row = filterZero(row);
+
+            while (row.length < columns) {
+                row.push(0);
+            }
+            return row;
+        }
+
+        function slideLeft() {
+            for (let r = 0; r < rows; r++) {
+                let row = board[r];
+                row = slide(row);
+                board[r] = row;
+                for (let c = 0; c < columns; c++) {
+                    let tile = document.getElementById(r.toString() + "-" + c.toString());
+                    let num = board[r][c];
+                    updateTile(tile, num);
+                }
+            }
+        }
+
+        function slideRight() {
+            for (let r = 0; r < rows; r++) {
+                let row = board[r];
+                row.reverse();
+                row = slide(row)
+                board[r] = row.reverse();
+                for (let c = 0; c < columns; c++) {
+                    let tile = document.getElementById(r.toString() + "-" + c.toString());
+                    let num = board[r][c];
+                    updateTile(tile, num);
+                }
+            }
+        }
+
+        function slideUp() {
+            for (let c = 0; c < columns; c++) {
+                let row = [board[0][c], board[1][c], board[2][c], board[3][c]];
+                row = slide(row);
+                for (let r = 0; r < rows; r++) {
+                    board[r][c] = row[r];
+                    let tile = document.getElementById(r.toString() + "-" + c.toString());
+                    let num = board[r][c];
+                    updateTile(tile, num);
+                }
+            }
+        }
+
+        function slideDown() {
+            for (let c = 0; c < columns; c++) {
+                let row = [board[0][c], board[1][c], board[2][c], board[3][c]];
+                row.reverse();
+                row = slide(row);
+                row.reverse();
+                for (let r = 0; r < rows; r++) {
+                    board[r][c] = row[r];
+                    let tile = document.getElementById(r.toString() + "-" + c.toString());
+                    let num = board[r][c];
+                    updateTile(tile, num);
+                }
+            }
+        }
+
+        function setTwo() {
+            if (!hasEmptyTile()) {
+                return;
+            }
+            let found = false;
+            while (!found) {
+                let r = Math.floor(Math.random() * rows);
+                let c = Math.floor(Math.random() * columns);
+                if (board[r][c] == 0) {
+                    board[r][c] = 3;
+                    let tile = document.getElementById(r.toString() + "-" + c.toString());
+                    tile.innerText = "3";
+                    tile.classList.add("x3");
+                    found = true;
+                }
+            }
+        }
+
+        function hasEmptyTile() {
+            let count = 0;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < columns; c++) {
+                    if (board[r][c] == 0) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+
+</body>
+
+</html>
